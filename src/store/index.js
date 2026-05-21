@@ -10,7 +10,8 @@ const MUTATIONS = {
   UPDATE_TIMER: 'UPDATE_TIMER',
   FINISH_GAME: 'FINISH_GAME',
   RESET_GAME: 'RESET_GAME',
-  SET_RECORD: 'SET_RECORD'
+  SET_RECORD: 'SET_RECORD',
+  NEXT_LAYER: 'NEXT_LAYER'
 }
 
 function shuffle(array) {
@@ -30,15 +31,17 @@ function createCards(level, layers) {
 
   const cards = []
 
-  for (let i = 1; i <= pairs; i++) {
-    for (let j = 0; j < 2; j++) {
-      cards.push({
-        id: Math.random(),
-        value: i,
-        opened: false,
-        removed: false,
-        layer: Math.floor(Math.random() * layers) + 1
-      })
+  for (let layer = 1; layer <= layers; layer++) {
+    for (let i = 1; i <= pairs; i++) {
+      for (let j = 0; j < 2; j++) {
+        cards.push({
+          id: Math.random(),
+          value: i,
+          opened: false,
+          removed: false,
+          layer: layer
+        })
+      }
     }
   }
 
@@ -50,6 +53,7 @@ export default createStore({
     return {
       level: 'easy',
       layers: 1,
+      currentLayer: 1,
       cards: [],
       selectedCards: [],
       timer: 0,
@@ -66,7 +70,8 @@ export default createStore({
     gameFinished: state => state.gameFinished,
     record: state => state.record,
     level: state => state.level,
-    layers: state => state.layers
+    layers: state => state.layers,
+    currentLayer: state => state.currentLayer
   },
 
   mutations: {
@@ -82,6 +87,7 @@ export default createStore({
       state.cards = createCards(state.level, state.layers)
       state.timer = 0
       state.selectedCards = []
+      state.currentLayer = 1
       state.gameFinished = false
       state.gameStarted = true
     },
@@ -123,17 +129,22 @@ export default createStore({
       state.cards = []
       state.timer = 0
       state.selectedCards = []
+      state.currentLayer = 1
       state.gameFinished = false
     },
 
     [MUTATIONS.SET_RECORD](state, payload) {
       state.record = payload
       localStorage.setItem('record', payload)
+    },
+
+    [MUTATIONS.NEXT_LAYER](state) {
+      state.currentLayer++
     }
   },
 
   actions: {
-    startGame({ commit, dispatch, state }) {
+    startGame({ commit, state }) {
       commit(MUTATIONS.START_GAME)
 
       if (state.interval) {
@@ -143,8 +154,6 @@ export default createStore({
       state.interval = setInterval(() => {
         commit(MUTATIONS.UPDATE_TIMER)
       }, 1000)
-
-      dispatch('checkFinish')
     },
 
     flipCard({ state, commit, dispatch }, id) {
@@ -153,6 +162,11 @@ export default createStore({
       if (!card) return
       if (card.opened) return
       if (card.removed) return
+
+      if (card.layer !== state.currentLayer) {
+        alert('Сначала очистите текущий слой')
+        return
+      }
 
       if (state.selectedCards.length >= 2) {
         return
@@ -178,6 +192,18 @@ export default createStore({
     },
 
     checkFinish({ state, commit }) {
+      const currentLayerCards = state.cards.filter(
+        c => !c.removed && c.layer === state.currentLayer
+      )
+
+      if (currentLayerCards.length === 0) {
+        if (state.currentLayer < state.layers) {
+          commit(MUTATIONS.NEXT_LAYER)
+          alert(`Открыт слой ${state.currentLayer}`)
+          return
+        }
+      }
+
       const activeCards = state.cards.filter(c => !c.removed)
 
       if (activeCards.length === 0 && state.cards.length > 0) {

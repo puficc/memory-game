@@ -2,6 +2,10 @@
   <div class="game">
     <GameTimer />
 
+    <div class="game__layer">
+      Текущий слой: {{ currentLayer }}
+    </div>
+
     <GameBoard />
 
     <FinishModal v-if="gameFinished" />
@@ -23,7 +27,10 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['gameFinished'])
+    ...mapGetters([
+      'gameFinished',
+      'currentLayer'
+    ])
   }
 }
 </script>
