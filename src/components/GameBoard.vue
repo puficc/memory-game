@@ -26,8 +26,7 @@ export default {
 <style scoped lang="scss">
 .board {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fit, 120px);
+  justify-content: center;
 }
 </style>

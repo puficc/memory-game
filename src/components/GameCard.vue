@@ -12,7 +12,10 @@
     </div>
 
     <div v-if="card.opened">
-      {{ card.value }}
+      <img
+      :src="`/src/assets/cards/${card.value}.png`"
+      class="card__image"
+      />
     </div>
 
     <div class="card__layer">
@@ -41,14 +44,21 @@ export default {
 
 <style scoped lang="scss">
 .card {
+  width: 120px;
   height: 120px;
+  min-width: 120px;
+  min-height: 120px;
+  max-width: 120px;
+  max-height: 120px;
+
+  overflow: hidden;
+
   background: white;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  font-size: 32px;
   position: relative;
   border: 2px solid purple;
 
@@ -59,6 +69,14 @@ export default {
   &.removed {
     opacity: 0;
     pointer-events: none;
+  }
+
+  &__image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+
+    flex-shrink: 1;
   }
 
   &__layer {
