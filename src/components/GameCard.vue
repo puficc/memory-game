@@ -11,15 +11,14 @@
       ?
     </div>
 
-    <div v-if="card.opened">
-      <img
+    <img
+      v-if="card.opened"
       :src="`/src/assets/cards/${card.value}.png`"
       class="card__image"
-      />
-    </div>
+    />
 
     <div class="card__layer">
-      Слой {{ card.layer }}
+      {{ card.layer }}
     </div>
   </div>
 </template>
@@ -28,12 +27,16 @@
 import { mapActions } from 'vuex'
 
 export default {
+  name: 'GameCard',
+
   props: {
     card: Object
   },
 
   methods: {
-    ...mapActions(['flipCard']),
+    ...mapActions([
+      'flipCard'
+    ]),
 
     flip() {
       this.flipCard(this.card.id)
@@ -46,21 +49,24 @@ export default {
 .card {
   width: 120px;
   height: 120px;
-  min-width: 120px;
-  min-height: 120px;
-  max-width: 120px;
-  max-height: 120px;
-
-  overflow: hidden;
 
   background: white;
+
   border-radius: 10px;
+
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
+
   position: relative;
+
   border: 2px solid purple;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  font-size: 32px;
 
   &.opened {
     background: #dfb8ff;
@@ -72,11 +78,9 @@ export default {
   }
 
   &__image {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     object-fit: contain;
-
-    flex-shrink: 1;
   }
 
   &__layer {

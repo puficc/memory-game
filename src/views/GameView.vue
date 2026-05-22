@@ -2,10 +2,6 @@
   <div class="game">
     <GameTimer />
 
-    <div class="game__layer">
-      Текущий слой: {{ currentLayer }}
-    </div>
-
     <GameBoard />
 
     <FinishModal v-if="gameFinished" />
@@ -13,13 +9,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import GameBoard from '../components/GameBoard.vue'
 import GameTimer from '../components/GameTimer.vue'
 import FinishModal from '../components/FinishModal.vue'
 
-import { mapGetters } from 'vuex'
-
 export default {
+  name: 'GameView',
+
   components: {
     GameBoard,
     GameTimer,
@@ -28,8 +26,7 @@ export default {
 
   computed: {
     ...mapGetters([
-      'gameFinished',
-      'currentLayer'
+      'gameFinished'
     ])
   }
 }
@@ -38,7 +35,9 @@ export default {
 <style scoped lang="scss">
 .game {
   min-height: 100vh;
+
   background: #f3f3f3;
+
   padding: 20px;
 }
 </style>
